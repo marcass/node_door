@@ -8,7 +8,7 @@ var Router       = require('router')
 
 //store pin for toggling door - check if it needs to be pulled down (high) or pulled up (low) and declare here in case it 
 // drops each time function is run
-var pin = new Gpio(5, 'low');
+var pin = new Gpio(5, 'high');
 var open_reed = new Gpio(6, 'in');
 var closed_reed = new Gpio(7, 'in');
 var state;
@@ -22,12 +22,12 @@ var action;
 //functions for operating door
 //reset pin that actuates opener to high state after required time has elapsed
 function resetOpener() {
-  pin.write(0)
+  pin.write(1)
 }
 
 //pull pin down for 100 milliseconds to kick door
 function operateDoor() {
-  pin.write(1)
+  pin.write(0)
   setTimeout(resetOpener, 1000)
 }
 
@@ -75,16 +75,17 @@ closing.get('/', function (req, res) {
   //call function to assess status and store value
   getDoorStatus()
     if (state == "doorOpen") {
+      operateDoor()
       //populate action varialbe for diags
       action = "closing"
     }
     else if (state == "doorClosed") {
-      operateDoor()
       //populate action varialbe for diags
       action = "Door already closed, not closing"
     }
     else {
-      //Status must be unknown or somthing has fucked up
+      //Status must be unknown or somthing has fucked up so we need to do somthing with it (open/close/anything)
+      operateDoor()
       action ="check_door"
     }
   res.statusCode = 200
@@ -113,7 +114,8 @@ opening.get('/', function (req, res) {
       action = "Door already open, not opening"
     }
     else {
-      //Status must be unknown or somthing has fucked up
+      //Status must be unknown or somthing has fucked up so operate anyway
+      operateDoor()
       action ="check_door"
     }
   res.statusCode = 200
