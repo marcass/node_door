@@ -1,5 +1,5 @@
 #!/bin/sh
-#/etc/init.d/nodestart
+#/etc/init.d/nodestart.sh
 
 export PATH=$PATH:/usr/local/bin
 export NODE_PATH=$NODE_PATH:/usr/local/lib/node_modules
@@ -19,3 +19,13 @@ stop)
 esac
 
 exit 0
+
+#########Scipt manipulation:        ###############
+# 1. Move and make the script executable:
+#chmod 755 /etc/init.d/nodestart.sh
+# 2. Set it to go up and down with the system via Debian's update-rc.d:
+	#update-rc.d nodestart.sh defaults
+	#Stop it from coming up with:
+	#update-rc.d -f nodestart.sh remove
+###################################################
+
