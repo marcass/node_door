@@ -1,6 +1,17 @@
 #!/bin/sh
 #/etc/init.d/nodestart.sh
 
+### BEGIN INIT INFO
+# Provides:          nodestart.sh
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Example initscript
+# Description:       This file should be used to construct scripts to be
+#                    placed in /etc/init.d.
+### END INIT INFO
+
 export PATH=$PATH:/usr/local/bin
 export NODE_PATH=$NODE_PATH:/usr/local/lib/node_modules
 
@@ -20,12 +31,4 @@ esac
 
 exit 0
 
-#########Scipt manipulation:        ###############
-# 1. Move and make the script executable:
-#chmod 755 /etc/init.d/nodestart.sh
-# 2. Set it to go up and down with the system via Debian's update-rc.d:
-	#update-rc.d nodestart.sh defaults
-	#Stop it from coming up with:
-	#update-rc.d -f nodestart.sh remove
-###################################################
 
