@@ -8,7 +8,7 @@ const int inputPin = 2;         // variable for reading the pushbutton status
 unsigned long start_time;
 const int wait_time_min = 300;    // time [ms] for
 const int cut_off_time = 600;  // time [ms] for input pin to be HIGH before deciding to trigger relay 
-const int trigger_duration = 100;  // time [ms] that relay is pulled HIGH for.
+const int trigger_duration = 200;  // time [ms] that relay is pulled HIGH for.
 int breach_min;
 int triggered;
 
