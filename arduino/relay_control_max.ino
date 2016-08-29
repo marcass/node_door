@@ -12,7 +12,7 @@ const int TOO_LONG_TRIGGER = 4;
 
 const int min_triggertime = 300;
 const int max_triggertime = 1000;
-const int relay_high_time = 100;
+const int relay_high_time = 200;
 const int cool_down_time = 1;
 
 
