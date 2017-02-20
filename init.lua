@@ -1,9 +1,9 @@
 -- init.lua 
 
--- set the following variables in-file (short on memory)
+-- may need to set the following variables in-file (if short on memory)
 ssid	= ""
 pass	= ""
-id	= "door"		--client id for mqtt
+id	= "ESP8266"		--client id for mqtt
 broker	= "192.168.0.3"	--url/ip of broker
 buser	= ""		--broker username
 bpass	= ""		--broker password

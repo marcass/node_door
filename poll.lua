@@ -12,8 +12,8 @@ m:on("offline", function(conn)
 
  -- on publish message receive event  
 m:on("message", function(conn, topic, data)  
- if (data == "ON") then
-   print("Kick relay")
+ if (data == "1") then
+   print("Kick door")
  else
    print("Invalid, ignoring")
  end
