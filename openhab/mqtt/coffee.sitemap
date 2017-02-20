@@ -1,0 +1,9 @@
+sitemap coffee label="Coffee machine"
+{
+
+   Frame label="Coffee machine" {
+     Switch item=coffee         label="Coffee machine"
+     Text item=coffee_status    label="MQTT status"  mappings=["ON"="offline"]
+   }
+
+}

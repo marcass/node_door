@@ -1,20 +1,5 @@
  --poll.lua  
 
--- set the following variables in-file (short on memory)
---client id for mqtt
-id = 
---url/ip of broker
-broker = ""
- --broker username
-user = 
---broker password
-pass = 
---last will and testament topic
-lwt = ""
---topic
-ctop = ""
-csta = ""
-
 m = mqtt.Client(id, 180, user, pass) 
 --last will and testament topic
 m:lwt(lwt, "offline", 0, 0)  
@@ -39,11 +24,11 @@ tmr.alarm(0, 1000, 1, function()
   --check ip status and subscribe
   if wifi.sta.status() == 5 and wifi.sta.getip() ~= nil then
     tmr.stop(0)
-    --for secure use m:connect("<broker url/ip>", 8883, 1, function(conn)
+    --for secure use m:connect(broker url/ip, 8883, 1, function(conn)
     m:connect(broker, 1883, 0, function(conn)
       tmr.stop(4)
-      --heating topic
-      m:subscribe(ctop,1, function(conn)
+      --door topic
+      m:subscribe(top,1, function(conn)
       end)
     end)
   end
