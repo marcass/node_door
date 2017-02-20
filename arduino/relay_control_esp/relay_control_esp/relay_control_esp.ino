@@ -21,7 +21,7 @@ volatile unsigned long time_since_trigger;
 //trigger states
 const int WAITING = 1;
 const int PRELIMINARY_TRIGGER = 2;
-const int TRIGGERED = 3;
+const int TRIGGER = 3;
 const int TOO_LONG_TRIGGER = 4;
 
 //door states
@@ -50,10 +50,14 @@ void setup(){
 }
 
 void loop(){
-  if (STATE == WAITING) {waiting();}
-  else if (STATE == PRELIMINARY_TRIGGER) {pre_trigger();}
-  else if (STATE == TRIGGERED) {triggered();}
-  else if (STATE == TOO_LONG_TRIGGER) {too_long();}
+  switch (STATE) {
+    case WAITING:
+      waiting();
+      break;
+    case TRIGGER:
+      triggered();
+      break;
+  }
   if (stringComplete){
     inputString = "";
     stringComplete = false;
@@ -69,6 +73,7 @@ void loop(){
     prev_state = door_state;
     check_door();
   }
+  delay(50);
 }
 
 void check_door() {
@@ -85,13 +90,13 @@ void check_door() {
   if (door_state != prev_state) {
     switch (door_state) {
       case DOOR_CLOSED:
-        Serial.println("m:publish(\"door/state\",1,0,0, function(conn) end )");//fix to reflect variable
+        Serial.println("m:publish(\"door/state\",Closed,0,0, function(conn) end )");//fix to reflect variable
         break;
       case DOOR_OPEN:
-        Serial.println("m:publish(\"door/state\",1,0,0, function(conn) end )"); //fix to reflect variable
+        Serial.println("m:publish(\"door/state\",Open,0,0, function(conn) end )"); //fix to reflect variable
         break;
       case DOOR_UNKNOWN:
-        Serial.println("m:publish(\"door/state\",1,0,0, function(conn) end )");//fix to reflect variable
+        Serial.println("m:publish(\"door/state\",Unknown,0,0, function(conn) end )");//fix to reflect variable
         break;
     }
   }
@@ -102,7 +107,7 @@ void waiting(){
     if (inputString.startsWith("Kick door")) {
       inputString = "";
       stringComplete = false;
-      STATE = PRELIMINARY_TRIGGER;
+      STATE = TRIGGER;
       time_since_trigger = millis();
       #ifdef debug
         Serial.println("going to PRELIMINARY_TRIGGER state");
@@ -112,31 +117,31 @@ void waiting(){
   }
 }
 
-void pre_trigger(){
-  int dt = millis() - time_since_trigger;
-  if ( digitalRead(relaypin) == HIGH) {  
-    if (dt > max_triggertime) {
-      STATE = TOO_LONG_TRIGGER;
-      #ifdef debug
-        Serial.println(time_since_trigger);
-        Serial.println("going to TOO_LONG_TRIGGER state");
-      #endif
-    }
-  } else {
-    // input pin is LOW
-    if  (dt >  min_triggertime){
-      STATE = TRIGGERED;
-      #ifdef debug
-        Serial.println("going to TRIGGERED state");
-      #endif
-    } else {
-      STATE = WAITING;
-      #ifdef debug
-        Serial.println("going to WAITING state");
-      #endif
-    }
-  }
-}
+//void pre_trigger(){
+//  int dt = millis() - time_since_trigger;
+//  if ( digitalRead(relaypin) == HIGH) {  
+//    if (dt > max_triggertime) {
+//      STATE = TOO_LONG_TRIGGER;
+//      #ifdef debug
+//        Serial.println(time_since_trigger);
+//        Serial.println("going to TOO_LONG_TRIGGER state");
+//      #endif
+//    }
+//  } else {
+//    // input pin is LOW
+//    if  (dt >  min_triggertime){
+//      STATE = TRIGGERED;
+//      #ifdef debug
+//        Serial.println("going to TRIGGERED state");
+//      #endif
+//    } else {
+//      STATE = WAITING;
+//      #ifdef debug
+//        Serial.println("going to WAITING state");
+//      #endif
+//    }
+//  }
+//}
 
 void triggered(){
   digitalWrite(relaypin, HIGH);
@@ -151,14 +156,14 @@ void triggered(){
   #endif
 }
 
-void too_long(){
-  if (digitalRead(relaypin) == LOW) {
-    delay(cool_down_time);
-    STATE = WAITING;
-    time_since_trigger = millis();
-    #ifdef debug
-      Serial.println(time_since_trigger);
-      Serial.println("going to WAITING state");
-    #endif
-  }
-}
+//void too_long(){
+//  if (digitalRead(relaypin) == LOW) {
+//    delay(cool_down_time);
+//    STATE = WAITING;
+//    time_since_trigger = millis();
+//    #ifdef debug
+//      Serial.println(time_since_trigger);
+//      Serial.println("going to WAITING state");
+//    #endif
+//  }
+//}
