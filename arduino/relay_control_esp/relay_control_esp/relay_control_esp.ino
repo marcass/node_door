@@ -1,4 +1,4 @@
-#define debug
+//#define debug
 
 // SETUP SERIAL COMM
 String inputString = "";         // a string to hold incoming data
@@ -37,14 +37,14 @@ const int cool_down_time = 1;
 
 void setup(){
   //start serial connection
-  Serial.begin(9600);
+  Serial.begin(115200);
   inputString.reserve(200); // reserve mem for received message on serial port
   //configure pin2 as an input and enable the internal pull-up resistor
   pinMode(OPEN, INPUT_PULLUP);
   pinMode(CLOSED, INPUT_PULLUP);
   pinMode(relaypin, OUTPUT); 
   pinMode(ledpin, OUTPUT);
-  digitalWrite(relaypin, LOW);
+  digitalWrite(relaypin, HIGH);
   digitalWrite(ledpin, LOW);
   STATE = WAITING;
 }
@@ -74,6 +74,7 @@ void loop(){
     check_door();
   }
   delay(50);
+  //Serial.println(STATE);
 }
 
 void check_door() {
@@ -81,7 +82,7 @@ void check_door() {
   closed_reed = digitalRead(CLOSED);
   if ((open_reed == LOW) && (closed_reed == HIGH)) {
     door_state = DOOR_OPEN;
-  } else if ((open_reed == HIGH) && (closed_reed == LOW)) {
+  }else if ((open_reed == HIGH) && (closed_reed == LOW)) {
     door_state = DOOR_CLOSED;
   } else {
     door_state = DOOR_UNKNOWN;
@@ -90,13 +91,13 @@ void check_door() {
   if (door_state != prev_state) {
     switch (door_state) {
       case DOOR_CLOSED:
-        Serial.println("m:publish(\"door/state\",Closed,0,0, function(conn) end )");//fix to reflect variable
+        Serial.println("m:publish(\"door/state\",\"Closed\",0,0, function(conn) end )");//fix to reflect variable
         break;
       case DOOR_OPEN:
-        Serial.println("m:publish(\"door/state\",Open,0,0, function(conn) end )"); //fix to reflect variable
+        Serial.println("m:publish(\"door/state\",\"Open\",0,0, function(conn) end )"); //fix to reflect variable
         break;
       case DOOR_UNKNOWN:
-        Serial.println("m:publish(\"door/state\",Unknown,0,0, function(conn) end )");//fix to reflect variable
+        Serial.println("m:publish(\"door/state\",\"Unknown\",0,0, function(conn) end )");//fix to reflect variable
         break;
     }
   }
@@ -104,15 +105,17 @@ void check_door() {
 
 void waiting(){
   if (stringComplete) {
+    #ifdef debug
+      Serial.println("stuff from serial port");
+    #endif
     if (inputString.startsWith("Kick door")) {
+      #ifdef debug
+        Serial.println("door kicked");
+      #endif
       inputString = "";
       stringComplete = false;
       STATE = TRIGGER;
       time_since_trigger = millis();
-      #ifdef debug
-        Serial.println("going to PRELIMINARY_TRIGGER state");
-        Serial.println(time_since_trigger);
-      #endif
     }
   }
 }
@@ -144,10 +147,10 @@ void waiting(){
 //}
 
 void triggered(){
-  digitalWrite(relaypin, HIGH);
+  digitalWrite(relaypin, LOW);
   digitalWrite(ledpin, HIGH);
   delay(relay_high_time);
-  digitalWrite(relaypin, LOW);
+  digitalWrite(relaypin, HIGH);
   digitalWrite(ledpin, LOW);
   delay(cool_down_time);
   STATE = WAITING;
@@ -167,3 +170,14 @@ void triggered(){
 //    #endif
 //  }
 //}
+
+void serialEvent() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read();  // add it to the inputString:
+    inputString += inChar;
+    if (inChar == '\n') {
+      stringComplete = true;
+    } 
+  }
+}
