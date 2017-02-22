@@ -1,6 +1,6 @@
  --poll.lua  
 
-m = mqtt.Client(id, 180, user, pass) 
+m = mqtt.Client(id, 180, buser, bpass) 
 --last will and testament topic
 m:lwt(lwt, "offline", 0, 0)  
 m:on("offline", function(conn)   
