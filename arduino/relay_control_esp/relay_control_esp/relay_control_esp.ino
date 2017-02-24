@@ -63,21 +63,23 @@ void loop(){
     stringComplete = false;
   }
   //read state of door
-  if (open_reed != digitalRead(OPEN)){
-    //something has changed so set prev state and check
-    prev_state = door_state;
-    check_door();
-  }
-  if (closed_reed != digitalRead(CLOSED)) {
-    //something has changed
-    prev_state = door_state;
-    check_door();
-  }
+//  if (open_reed != digitalRead(OPEN)){
+//    //something has changed so set prev state and check
+//    prev_state = door_state;
+//    check_door();
+//  }
+//  if (closed_reed != digitalRead(CLOSED)) {
+//    //something has changed
+//    prev_state = door_state;
+//    delay(1000);
+//    check_door();
+//  }
+  check_door();
   delay(50);
-  //Serial.println(STATE);
 }
 
 void check_door() {
+  //prev_state = door_state;
   open_reed = digitalRead(OPEN);
   closed_reed = digitalRead(CLOSED);
   if ((open_reed == LOW) && (closed_reed == HIGH)) {
@@ -100,6 +102,7 @@ void check_door() {
         Serial.println("m:publish(\"door/state\",\"Unknown\",0,0, function(conn) end )");//fix to reflect variable
         break;
     }
+    prev_state = door_state;
   }
 }
 
