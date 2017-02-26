@@ -93,13 +93,13 @@ void check_door() {
   if (door_state != prev_state) {
     switch (door_state) {
       case DOOR_CLOSED:
-        Serial.println("m:publish(\"door/state\",\"Closed\",0,0, function(conn) end )");//fix to reflect variable
+        Serial.println("m:publish(\"door/state\",\"Closed\",0,1, function(conn) end )");//fix to reflect variable
         break;
       case DOOR_OPEN:
-        Serial.println("m:publish(\"door/state\",\"Open\",0,0, function(conn) end )"); //fix to reflect variable
+        Serial.println("m:publish(\"door/state\",\"Open\",0,1, function(conn) end )"); //fix to reflect variable
         break;
       case DOOR_UNKNOWN:
-        Serial.println("m:publish(\"door/state\",\"Unknown\",0,0, function(conn) end )");//fix to reflect variable
+        Serial.println("m:publish(\"door/state\",\"Unknown\",0,1, function(conn) end )");//fix to reflect variable
         break;
     }
     prev_state = door_state;
