@@ -8,22 +8,16 @@ boolean stringComplete = false;  // whether the string is complete
 
 const int SENSOR = 11;
 const int ledpin = 13;
-int door_state;
+int state;
 int reed;
-
-volatile int STATE;
 volatile unsigned long time_since_trigger;
 
-//trigger states
-const int CLOSED = 1;
-const int OPEN = 2;
-
 //door states
-const int DOOR_OPEN = 0;
-const int DOOR_CLOSED = 1;
-//const int DOOR_UNKNOWN = 2;
+const int OPEN = 0;
+const int CLOSED = 1;
+const int UNKNOWN = 2;
 
-const int cool_down_time = 1;
+int prev_state;
 
 
 void setup(){
@@ -34,23 +28,19 @@ void setup(){
   pinMode(ledpin, OUTPUT);
 
   digitalWrite(ledpin, LOW);
-  STATE = WAITING;
+  state = CLOSED;
 }
 
 void loop(){
-  switch (STATE) {
-    case WAITING:
-      waiting();
+  switch (state) {
+    case OPEN:
+      proc_open();
       break;
-    case TRIGGER:
-      triggered();
+    case CLOSED:
+      proc_closed();
       break;
   }
-  if (stringComplete){
-    inputString = "";
-    stringComplete = false;
-  }
-  //check_door();
+  check_door();
   delay(50);
 }
 
