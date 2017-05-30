@@ -1,10 +1,13 @@
+#!/usr/bin/env python
 import time
 #import paho.mqtt.client as mqtt
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
-from playsound import playsound
+#from playsound import playsound # not working from 'pip install playsound' as linux support only on github repo
+import os
 
-sound = '/home/pi/bin/sounds/horse_neigh.wav'
+sound = '/home/pi/bin/sounds/GLaDOS_00_part1_entry-1.wav'
+#sound = '/home/pi/bin/sounds/horse_neigh.wav'
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -18,10 +21,11 @@ def on_message(client, userdata, msg):
     print(msg.topic+' '+str(msg.payload))
     allowed_passthrough_msg = ['Opened']
     if str(msg.payload) in allowed_passthrough_msg:
-        playsound(sound)
+        #playsound(sound)
+        os.system('aplay ' + sound)
+        time.sleep(20)
         print 'Played ' + sound + ' and sleeping for 60s'
         #stops door chime going constantly
-        time.sleep(60)
 
 if __name__ == "__main__":
     client = mqtt.Client()
@@ -38,7 +42,3 @@ if __name__ == "__main__":
     # manual interface.
     client.loop_forever()
     #client.loop_start()
-    #client.subscribe("door/state")
-    #while True:
-    #    #for debugging enable printing of script
-    #    print(msg.topic+' '+str(msg.payload))
