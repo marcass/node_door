@@ -10,14 +10,13 @@ m:on("offline", function(conn)
   dofile("offline.lua")
  end)  
 
- -- on publish message receive event  
-m:on("message", function(conn, topic, data)  
- if (data == "1") then
-   print("Kick door")
- else
-   print("Invalid, ignoring")
- end
-end)  
+--if door sensor opens
+tmr.alarm(3, 1000, tmr.ALARM_AUTO, function() --starts timer 3 and AUTO means runs every 1000ms
+  --read pin every second
+  if gpio.read(4) == 0 then
+    m:publish("door/state","Opened",0,1, function(conn)
+    end )
+  end
 
 --do the subscription business
 tmr.alarm(0, 1000, 1, function()  
@@ -27,6 +26,9 @@ tmr.alarm(0, 1000, 1, function()
     --for secure use m:connect(broker url/ip, 8883, 1, function(conn)
     m:connect(broker, 1883, 0, function(conn)
       tmr.stop(4)
+      --door topic
+      m:subscribe(top,1, function(conn)
+      end)
     end)
   end
 end)
