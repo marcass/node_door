@@ -42,13 +42,13 @@ void proc_open() {
 }
 
 void proc_closed() {
-  if digitalRead(SENSOR) == HIGH) {
+  if (digitalRead(SENSOR) == HIGH) {
     #ifdef debug
       Serial.println("Door Opened");
     #endif
     //send message to broker via ESP8266 module
     Serial.println("m:publish(\"door/state\",\"Opened\",0,1, function(conn) end )");
-    state = WAITING; //to close
+    state = OPEN; //to close
   }
 }
 
