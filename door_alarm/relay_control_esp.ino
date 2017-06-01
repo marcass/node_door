@@ -1,32 +1,19 @@
 //#define debug
 
-// SETUP SERIAL COMM
-String inputString = "";         // a string to hold incoming data
-boolean stringComplete = false;  // whether the string is complete
-
-
-
-const int SENSOR = 11;
+const int SENSOR = 11; //door sensor connected one end here and the other end ground
 const int ledpin = 13;
 int state;
-int reed;
-volatile unsigned long time_since_trigger;
 
 //door states
 const int OPEN = 0;
 const int CLOSED = 1;
-const int UNKNOWN = 2;
-
-int prev_state;
-
+//const int DOOR_UNKNOWN = 2;
 
 void setup(){
   //start serial connection
   Serial.begin(115200);
-  //configure pin2 as an input and enable the internal pull-up resistor
-  pinMode(SENSOR, INPUT_PULLUP);
+  pinMode(SENSOR, INPUT_PULLUP); //wire to pin 11 pulled up internall, when reed closed (door closed) it gets pulled to ground
   pinMode(ledpin, OUTPUT);
-
   digitalWrite(ledpin, LOW);
   state = CLOSED;
 }
@@ -40,113 +27,28 @@ void loop(){
       proc_closed();
       break;
   }
-  check_door();
   delay(50);
 }
 
-void check_door() {
-  //prev_state = door_state;
-  open_reed = digitalRead(OPEN);
-  closed_reed = digitalRead(CLOSED);
-  if ((open_reed == LOW) && (closed_reed == HIGH)) {
-    door_state = DOOR_OPEN;
-  }else if ((open_reed == HIGH) && (closed_reed == LOW)) {
-    door_state = DOOR_CLOSED;
-  } else {
-    door_state = DOOR_UNKNOWN;
-  }
-  //publish if changed
-  if (door_state != prev_state) {
-    switch (door_state) {
-      case DOOR_CLOSED:
-        Serial.println("m:publish(\"door/state\",\"Closed\",0,1, function(conn) end )");//fix to reflect variable
-        break;
-      case DOOR_OPEN:
-        Serial.println("m:publish(\"door/state\",\"Open\",0,1, function(conn) end )"); //fix to reflect variable
-        break;
-      case DOOR_UNKNOWN:
-        Serial.println("m:publish(\"door/state\",\"Unknown\",0,1, function(conn) end )");//fix to reflect variable
-        break;
-    }
-    prev_state = door_state;
-  }
-}
-
-void waiting(){
-  if (stringComplete) {
+void proc_open() {
+  if(digitalRead(SENSOR) == LOW) {
     #ifdef debug
-      Serial.println("stuff from serial port");
+      Serial.println("Door Closed");
     #endif
-    if (inputString.startsWith("Kick door")) {
-      #ifdef debug
-        Serial.println("door kicked");
-      #endif
-      inputString = "";
-      stringComplete = false;
-      STATE = TRIGGER;
-      time_since_trigger = millis();
-    }
+    //send message to broker via ESP8266 module
+    Serial.println("m:publish(\"door/state\",\"Closed\",0,1, function(conn) end )");
+    state = CLOSED;
   }
 }
 
-//void pre_trigger(){
-//  int dt = millis() - time_since_trigger;
-//  if ( digitalRead(relaypin) == HIGH) {  
-//    if (dt > max_triggertime) {
-//      STATE = TOO_LONG_TRIGGER;
-//      #ifdef debug
-//        Serial.println(time_since_trigger);
-//        Serial.println("going to TOO_LONG_TRIGGER state");
-//      #endif
-//    }
-//  } else {
-//    // input pin is LOW
-//    if  (dt >  min_triggertime){
-//      STATE = TRIGGERED;
-//      #ifdef debug
-//        Serial.println("going to TRIGGERED state");
-//      #endif
-//    } else {
-//      STATE = WAITING;
-//      #ifdef debug
-//        Serial.println("going to WAITING state");
-//      #endif
-//    }
-//  }
-//}
-
-void triggered(){
-  digitalWrite(relaypin, LOW);
-  digitalWrite(ledpin, HIGH);
-  delay(relay_high_time);
-  digitalWrite(relaypin, HIGH);
-  digitalWrite(ledpin, LOW);
-  delay(cool_down_time);
-  STATE = WAITING;
-  #ifdef debug
-    Serial.println("going to WAITING state");
-  #endif
-}
-
-//void too_long(){
-//  if (digitalRead(relaypin) == LOW) {
-//    delay(cool_down_time);
-//    STATE = WAITING;
-//    time_since_trigger = millis();
-//    #ifdef debug
-//      Serial.println(time_since_trigger);
-//      Serial.println("going to WAITING state");
-//    #endif
-//  }
-//}
-
-void serialEvent() {
-  while (Serial.available()) {
-    // get the new byte:
-    char inChar = (char)Serial.read();  // add it to the inputString:
-    inputString += inChar;
-    if (inChar == '\n') {
-      stringComplete = true;
-    } 
+void proc_closed() {
+  if digitalRead(SENSOR) == HIGH) {
+    #ifdef debug
+      Serial.println("Door Opened");
+    #endif
+    //send message to broker via ESP8266 module
+    Serial.println("m:publish(\"door/state\",\"Opened\",0,1, function(conn) end )");
+    state = WAITING; //to close
   }
 }
+
