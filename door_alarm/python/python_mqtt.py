@@ -6,8 +6,8 @@ import paho.mqtt.publish as publish
 #from playsound import playsound # not working from 'pip install playsound' as linux support only on github repo
 import os
 
-sound = '/home/pi/bin/sounds/GLaDOS_00_part1_entry-1.wav'
-#sound = '/home/pi/bin/sounds/horse_neigh.wav'
+#sound = '/home/pi/bin/sounds/GLaDOS_00_part1_entry-1.wav'
+sound = '/home/pi/bin/sounds/Horse-nay.mp3'
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -22,9 +22,11 @@ def on_message(client, userdata, msg):
     allowed_passthrough_msg = ['Opened']
     if str(msg.payload) in allowed_passthrough_msg:
         #playsound(sound)
-        os.system('aplay ' + sound)
-        time.sleep(20)
-        print 'Played ' + sound + ' and sleeping for 60s'
+        #os.system('omxplayer ' + sound)
+        os.system('mpg123 ' + sound)
+        #os.system('aplay ' + sound)
+        time.sleep(60)
+        #print 'Played ' + sound + ' and sleeping for 60s'
         #stops door chime going constantly
 
 if __name__ == "__main__":
