@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 import time
-#import paho.mqtt.client as mqtt
 import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
-#from playsound import playsound # not working from 'pip install playsound' as linux support only on github repo
 import os
 
 #sound = '/home/pi/bin/sounds/GLaDOS_00_part1_entry-1.wav'
@@ -19,25 +17,22 @@ def on_connect(client, userdata, flags, rc):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     print(msg.topic+' '+str(msg.payload))
-    allowed_passthrough_msg = ['Opened']
-    if str(msg.payload) in allowed_passthrough_msg:
+    #allowed_passthrough_msg = ['Opened']
+    if 'Opened' in msg.payload:
         #playsound(sound)
         #os.system('omxplayer ' + sound)
         os.system('mpg123 ' + sound)
         #os.system('aplay ' + sound)
         time.sleep(60)
-        #print 'Played ' + sound + ' and sleeping for 60s'
+        print 'Played ' + sound + ' and sleeping for 60s'
         #stops door chime going constantly
 
 if __name__ == "__main__":
     client = mqtt.Client()
     client.username_pw_set(username='esp', password='heating')
-    
-    #mqtt.userdata_set(username='esp',password='heating')
     client.on_connect = on_connect
     client.on_message = on_message
     client.connect("pi", 1883, 60)
-
     # Blocking call that processes network traffic, dispatches callbacks and
     # handles reconnecting.
     # Other loop*() functions are available that give a threaded interface and a
