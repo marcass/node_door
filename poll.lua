@@ -27,9 +27,6 @@ tmr.alarm(0, 1000, 1, function()
     --for secure use m:connect(broker url/ip, 8883, 1, function(conn)
     m:connect(broker, 1883, 0, function(conn)
       tmr.stop(4)
-      --door topic
-      m:subscribe(top,1, function(conn)
-      end)
     end)
   end
 end)

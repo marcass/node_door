@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 import time
 import paho.mqtt.client as mqtt
-import paho.mqtt.publish as publish
 import os
 
-#sound = '/home/pi/bin/sounds/GLaDOS_00_part1_entry-1.wav'
-sound = '/home/pi/bin/sounds/Horse-nay.mp3'
+broker = "nuc"
+sound = '/root/bin/sounds/Cow-moo-sound.mp3'
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -32,7 +31,7 @@ if __name__ == "__main__":
     client.username_pw_set(username='esp', password='heating')
     client.on_connect = on_connect
     client.on_message = on_message
-    client.connect("pi", 1883, 60)
+    client.connect(broker, 1883, 60)
     # Blocking call that processes network traffic, dispatches callbacks and
     # handles reconnecting.
     # Other loop*() functions are available that give a threaded interface and a

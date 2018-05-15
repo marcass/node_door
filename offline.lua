@@ -4,9 +4,6 @@ print("offline started") print(node.heap())
 --kill bad broker connecton
 m:close();
 
---stop the temp timer
-tmr.stop(1)
-
 --empty m to conserve memory
 m = nil
 

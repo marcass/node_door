@@ -1,3 +1,0 @@
-String door_state "Garage door is [stauts %s]" {http"<[http://chip:8080/status:5000:REGEX((.*))]"}
-Switch door_close {http">[*:GET:http://chip:8080/action/close]", autoupdate="false"}
-Switch door_open {http">[*:GET:http://chip:8080/action/open]", autoupdate="false"}

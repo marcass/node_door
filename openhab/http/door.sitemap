@@ -1,7 +1,0 @@
-sitemap door label="GarageDoor" {
-  Frame label="Garage Door" {
-    Text item=door_state label="Door status is [%s]"
-    Switch item=door_close             label="Close door" mappings=[ON="Close"]
-    Switch item=door_open        label="Open door" mappings=[ON="Open"]
-  }
-}

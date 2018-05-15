@@ -4,12 +4,16 @@
 ssid	= ""
 pass	= ""
 id	= "ESP8266"		--client id for mqtt
-broker	= "192.168.0.3"	--url/ip of broker
-buser	= ""		--broker username
-bpass	= ""		--broker password
+broker	= "192.168.0.56"	--url/ip of broker
+buser	= "esp"		--broker username
+bpass	= "heating"		--broker password
 lwt	= "lwt/door"		--last will and testament topic
 top	= "door/com"		--com topic
 sta	= "door/state"		--state topic
+--sensor  = 4 			-- GPIO2
+
+--setup sensor pin
+gpio.mode(4, gpio.INPUT, gpio.PULLUP)
 
 -- set counter variables
 local  a  = 0      -- Counter of trys to connect to wifi
