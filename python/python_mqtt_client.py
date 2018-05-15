@@ -18,10 +18,7 @@ def on_message(client, userdata, msg):
     print(msg.topic+' '+str(msg.payload))
     #allowed_passthrough_msg = ['Opened']
     if 'Opened' in msg.payload:
-        #playsound(sound)
-        #os.system('omxplayer ' + sound)
         os.system('mpg123 ' + sound)
-        #os.system('aplay ' + sound)
         time.sleep(60)
         print 'Played ' + sound + ' and sleeping for 60s'
         #stops door chime going constantly
