@@ -10,6 +10,7 @@ quiet = False
 
 def reset_timer():
     global quiet
+    print 'resetting'
     quiet = False
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -25,7 +26,7 @@ def on_message(client, userdata, msg):
     print(msg.topic+' '+str(msg.payload))
     #allowed_passthrough_msg = ['Opened']
     if 'Opened' in msg.payload:
-        if quiet:
+        if quiet == False:
             print 'sleeping'
             return
         else:
@@ -33,6 +34,7 @@ def on_message(client, userdata, msg):
             print 'Played ' + sound + ' and sleeping for 20s'
             quiet = True
             t = threading.Timer(20.0, reset_timer)
+            t.start()
             # time.sleep(60)
             #stops door chime going constantly
             return
