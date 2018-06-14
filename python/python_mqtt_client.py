@@ -10,7 +10,7 @@ quiet = False
 
 def reset_timer():
     global quiet
-    print 'resetting'
+    #print 'resetting'
     quiet = False
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -23,15 +23,16 @@ def on_connect(client, userdata, flags, rc):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     global quiet
+    #print 'Status = ' +str(quiet)
     print(msg.topic+' '+str(msg.payload))
     #allowed_passthrough_msg = ['Opened']
     if 'Opened' in msg.payload:
-        if quiet == False:
-            print 'sleeping'
+        if quiet:
+            #print 'sleeping'
             return
         else:
             os.system('mpg123 ' + sound)
-            print 'Played ' + sound + ' and sleeping for 20s'
+            #print 'Played ' + sound + ' and sleeping for 20s'
             quiet = True
             t = threading.Timer(20.0, reset_timer)
             t.start()
