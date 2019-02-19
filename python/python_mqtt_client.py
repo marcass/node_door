@@ -4,7 +4,7 @@ import paho.mqtt.client as mqtt
 import os
 import threading
 
-broker = "nuc"
+broker = "localhost"
 sound = '/root/bin/sounds/Cow-moo-sound.mp3'
 quiet = False
 
@@ -41,11 +41,12 @@ def on_message(client, userdata, msg):
             return
 
 if __name__ == "__main__":
-    client = mqtt.Client()
-    client.username_pw_set(username='esp', password='heating')
+    client = mqtt.Client('python')
+ #   client.username_pw_set(username='esp', password='heating')
     client.on_connect = on_connect
     client.on_message = on_message
-    client.connect(broker, 1883, 60)
+#    client.connect(broker, 1883, 60)
+    client.connect(broker)
     # Blocking call that processes network traffic, dispatches callbacks and
     # handles reconnecting.
     # Other loop*() functions are available that give a threaded interface and a
